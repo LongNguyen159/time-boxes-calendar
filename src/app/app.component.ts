@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { WeekService, MonthService, WorkWeekService, DayService, AgendaService } from '@syncfusion/ej2-angular-schedule';
+import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, ScheduleComponent } from '@syncfusion/ej2-angular-schedule';
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
 
 @Component({
@@ -15,5 +15,6 @@ import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
   providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService],
 })
 export class AppComponent {
+  @ViewChild('scheduleObj') public scheduleObj!: ScheduleComponent;
   title = 'time-boxes-calendar';
 }
