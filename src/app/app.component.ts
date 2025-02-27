@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, ScheduleComponent } from '@syncfusion/ej2-angular-schedule';
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
+import { ResizeService, DragAndDropService } from '@syncfusion/ej2-angular-schedule';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService],
+  providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService, ResizeService, DragAndDropService],
 })
 export class AppComponent {
   @ViewChild('scheduleObj') public scheduleObj!: ScheduleComponent;
