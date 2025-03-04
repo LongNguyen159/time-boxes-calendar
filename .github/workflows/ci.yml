@@ -2,9 +2,9 @@ name: Calender CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, PipelineUpgrade]
   pull_request:
-    branches: [main]
+    branches: [main, PipelineUpgrade]
 
 jobs:
   build:
