@@ -1,0 +1,13 @@
+<div class="p-4">
+    <ejs-schedule 
+        #scheduleObj 
+        width="100%"
+        [currentView]="'Week'"
+        [timeFormat]="'HH:mm'"
+        (actionComplete)="onActionComplete($event)"
+    >
+    </ejs-schedule>
+</div>
+
+
+<router-outlet />
