@@ -14,31 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
-        with: 
-          distribution: 'temurin'
-          java-version: '17'
-      
-      - name: Build and Test Backend
-        working-directory: time-boxes-backend
-        run: |
-          chmod +x mvnw
-          ./mvnw clean test
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Front-End dependencies
-        working-directory: time-boxes-calendar
+      - name: Install dependencies
         run: npm install
 
-      - name: Run Front-End Tests
-        working-directory: time-boxes-calendar
+      - name: Run Tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
-        
+
       - name: Build Angular App
-        working-directory: time-boxes-calendar
         run: npm run build
