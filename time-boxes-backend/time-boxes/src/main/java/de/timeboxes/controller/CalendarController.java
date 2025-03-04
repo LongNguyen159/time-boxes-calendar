@@ -3,14 +3,15 @@ package de.timeboxes.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.timeboxes.entity.CalendarEntity;
@@ -32,8 +33,8 @@ public class CalendarController {
         return calendarService.getAllCalendars();
     }
 
-    @GetMapping("/{id}")
-    public Optional<CalendarEntity> getCalendarById(@PathVariable Long id) {
+    @GetMapping("/id")
+    public Optional<CalendarEntity> getCalendarById(@RequestParam("id") Long id) {
         return calendarService.getCalendarById(id);
     }
 
@@ -42,13 +43,14 @@ public class CalendarController {
         return calendarService.createCalendar(calendar);
     }
 
-    @PutMapping("/{id}")
-    public CalendarEntity updateCalendar(@PathVariable Long id, @RequestBody CalendarEntity updatedCalendar) {
+    @PutMapping("/id")
+    public CalendarEntity updateCalendar(@RequestParam("id") Long id, @RequestBody CalendarEntity updatedCalendar) {
         return calendarService.updateCalendar(id, updatedCalendar);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCalendar(@PathVariable Long id) {
+    @DeleteMapping("/id")
+    public ResponseEntity<Void> deleteCalendar(@RequestParam("id") Long id) {
         calendarService.deleteCalendar(id);
+        return ResponseEntity.noContent().build();
     }
 }

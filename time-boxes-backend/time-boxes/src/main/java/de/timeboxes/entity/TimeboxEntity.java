@@ -1,8 +1,10 @@
 package de.timeboxes.entity;
 
 import java.time.ZonedDateTime;
-import java.util.Calendar;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +23,9 @@ public class TimeboxEntity {
 
     private String subject;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private ZonedDateTime startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     private ZonedDateTime endTime;
     private Boolean isAllDay;
 
@@ -34,13 +38,14 @@ public class TimeboxEntity {
 
     @ManyToOne
     @JoinColumn(name = "calendar_id", nullable = false)
-    private Calendar calendar;
+    @JsonBackReference
+    private CalendarEntity calendar;
 
     // Constructors
     public TimeboxEntity() {}
 
     public TimeboxEntity(String subject, ZonedDateTime startTime, ZonedDateTime endTime, Boolean isAllDay, 
-                   String startTimezone, String endTimezone, String recurrenceRule, UUID guid, Calendar calendar) {
+                   String startTimezone, String endTimezone, String recurrenceRule, UUID guid, CalendarEntity calendar) {
         this.subject = subject;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -125,11 +130,11 @@ public class TimeboxEntity {
         this.guid = guid;
     }
 
-    public Calendar getCalendar() {
+    public CalendarEntity getCalendar() {
         return calendar;
     }
 
-    public void setCalendar(Calendar calendar) {
+    public void setCalendar(CalendarEntity calendar) {
         this.calendar = calendar;
     }
 }

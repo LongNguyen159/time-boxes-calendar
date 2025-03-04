@@ -1,1 +1,9 @@
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\repository\TimeboxRepository.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\entity\TimeboxEntity.java
 S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\Main.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\repository\CalendarRepository.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\service\TimeboxService.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\controller\TimeboxController.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\controller\CalendarController.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\service\CalendarService.java
+S:\Programming\time-boxes-calendar\time-boxes-backend\time-boxes\src\main\java\de\timeboxes\entity\CalendarEntity.java

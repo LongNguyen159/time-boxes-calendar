@@ -3,6 +3,8 @@ package de.timeboxes.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class CalendarEntity {
     
@@ -13,6 +15,7 @@ public class CalendarEntity {
     private String name;
 
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<TimeboxEntity> timeboxes;
 
     // Constructors
