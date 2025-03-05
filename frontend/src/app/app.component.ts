@@ -42,12 +42,17 @@ export class AppComponent {
     // this.http.post(`${this.backendUrl}/create`, event).subscribe(response => {
     // });
     console.log('Event saved:', event);
+
+    /** Save event, append class IT3XYZ if not given. Fetch the class from the current dropdown */
   }
+
 
   updateEvent(event: any) {
     // this.http.put(`${this.backendUrl}/update/${event.Id}`, event).subscribe(response => {
     // });
     console.log('Event updated:', event);
+
+    /** Save event, append class IT3XYZ if not given. Fetch the class from the current dropdown */
   }
 
   deleteEvent(eventId: number) {
