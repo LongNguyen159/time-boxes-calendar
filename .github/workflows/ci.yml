@@ -26,4 +26,4 @@ jobs:
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
       - name: Build Angular App
-        run: npm run build
+        run: ng serve
