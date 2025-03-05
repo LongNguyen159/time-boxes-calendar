@@ -1,4 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, ScheduleComponent, ActionEventArgs } from '@syncfusion/ej2-angular-schedule';
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
@@ -15,10 +16,17 @@ import { ResizeService, DragAndDropService } from '@syncfusion/ej2-angular-sched
   styleUrl: './app.component.scss',
   providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService, ResizeService, DragAndDropService],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   @ViewChild('scheduleObj') public scheduleObj!: ScheduleComponent;
   title = 'time-boxes-calendar';
 
+  private backendUrl = 'http://localhost:8080';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.fetchEvents();
+  }
 
   onActionComplete(event: ActionEventArgs) {
     // console.log('Action complete:', event);
@@ -39,25 +47,44 @@ export class AppComponent {
    * Backend to use ID based on the 'Id' attribute of the event object.
    */
   saveEvent(event: any) {
-    // this.http.post(`${this.backendUrl}/create`, event).subscribe(response => {
-    // });
-    console.log('Event saved:', event);
-
-    /** Save event, append class IT3XYZ if not given. Fetch the class from the current dropdown */
+    // Make a POST request to create the event on the backend
+    this.http.post(`${this.backendUrl}/calendar`, event).subscribe(response => {
+      console.log('Event saved:', response);
+    }, error => {
+      console.error('Error saving event:', error);
+    });
   }
 
 
   updateEvent(event: any) {
-    // this.http.put(`${this.backendUrl}/update/${event.Id}`, event).subscribe(response => {
-    // });
-    console.log('Event updated:', event);
-
-    /** Save event, append class IT3XYZ if not given. Fetch the class from the current dropdown */
+    // Sending the ID as a query parameter for the update
+    const updateUrl = `${this.backendUrl}/calendar/id?id=${event.Id}`;
+    this.http.put(updateUrl, event).subscribe(response => {
+      console.log('Event updated:', response);
+    }, error => {
+      console.error('Error updating event:', error);
+    });
   }
 
-  deleteEvent(eventId: number) {
-    // this.http.delete(`${this.backendUrl}/delete/${eventId}`).subscribe(response => {
-    // });
-    console.log('Event deleted:', eventId);
+  deleteEvent(eventId: string) {
+    // Sending the ID as a query parameter for deletion
+    const deleteUrl = `${this.backendUrl}/calendar/id?id=${eventId}`;
+    this.http.delete(deleteUrl).subscribe(response => {
+      console.log('Event deleted:', response);
+    }, error => {
+      console.error('Error deleting event:', error);
+    });
+  }
+
+
+  fetchEvents() {
+    // Sending a GET request to fetch all events
+    this.http.get(`${this.backendUrl}/calendar`).subscribe((response: any) => {
+      console.log('Fetched events:', response);
+      // Assuming the response contains the event data, you can populate the schedule here
+      this.scheduleObj.addEvent(response);
+    }, error => {
+      console.error('Error fetching events:', error);
+    });
   }
 }
