@@ -1,3 +1,8 @@
+<div class="p-4 pb-0">
+    <button mat-flat-button (click)="editMode = !editMode">
+        Edit mode: {{ editMode ? 'ON' : 'OFF' }}
+    </button>
+</div>
 <div class="p-4">
     <ejs-schedule 
         #scheduleObj 
@@ -5,6 +10,7 @@
         [currentView]="'Week'"
         [timeFormat]="'HH:mm'"
         (actionComplete)="onActionComplete($event)"
+        [readonly]="!editMode"
     >
     </ejs-schedule>
 </div>
