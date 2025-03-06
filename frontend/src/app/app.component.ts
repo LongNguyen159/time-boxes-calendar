@@ -142,12 +142,15 @@ export class AppComponent implements OnInit, AfterViewInit{
     } else {
       this.eventSettings = {
         ...this.eventSettings,
-        dataSource: this.allEvents.filter(event => event.Class === this.selectedClass)
+        dataSource: this.allEvents.filter(event => 
+          event.Class === this.selectedClass || event.Class === 'all' // Include 'all' class since other classes are subsets of it
+        )
       };
     }
-
+  
     this.scheduleObj.refresh();
   }
+  
 
   /** POST event to send to backend. Send the whole event object.
    * Backend to use ID based on the 'Id' attribute of the event object.
