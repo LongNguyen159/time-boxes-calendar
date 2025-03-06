@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, ScheduleComponent, ActionEventArgs, PopupOpenEventArgs } from '@syncfusion/ej2-angular-schedule';
+import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, ScheduleComponent, ActionEventArgs, PopupOpenEventArgs, EventSettingsModel } from '@syncfusion/ej2-angular-schedule';
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
 import { ResizeService, DragAndDropService } from '@syncfusion/ej2-angular-schedule';
 import {MatButtonModule} from '@angular/material/button';
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
 import { createElement } from '@syncfusion/ej2-base';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -16,23 +19,51 @@ import { createElement } from '@syncfusion/ej2-base';
     RouterOutlet,
     ScheduleModule,
     MatButtonModule,
+    MatSelectModule,
+    FormsModule,
+    CommonModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [DayService, WeekService, WorkWeekService, MonthService, AgendaService, ResizeService, DragAndDropService],
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit, AfterViewInit{
   @ViewChild('scheduleObj') public scheduleObj!: ScheduleComponent;
   title = 'time-boxes-calendar';
 
   private backendUrl = 'http://192.168.15.107:8080';
 
   editMode: boolean = true;
+  
+  classOptions = [
+    { text: 'All classes', value: 'all' },
+    { text: 'IT3X', value: 'it3x' },
+    { text: 'IT3Y', value: 'it3y' },
+    { text: 'IT3Z', value: 'it3z' },
+  ];
+
+  selectedClass: string = 'all'; // Default selection
+
+  // Library event settings model. This manages internal data source and events handling
+  eventSettings: EventSettingsModel = {
+    dataSource: []
+  };
+
+  private allEvents: any[] = []; // Store all events initially
+
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.fetchEvents();
+  }
+
+  ngAfterViewInit() {
+    // Get all displayed events on component load
+    setTimeout(() => {
+      this.allEvents = this.scheduleObj.getEvents() as any[];
+      this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
+    }, 500); // Delay to ensure events are loaded
   }
 
 
@@ -75,12 +106,7 @@ export class AppComponent implements OnInit{
 
         // Initialize the dropdown list
         let dropDownList: DropDownList = new DropDownList({
-          dataSource: [
-            { text: 'All classes', value: 'all' },
-            { text: 'IT3X', value: 'it3x' },
-            { text: 'IT3Y', value: 'it3y' },
-            { text: 'IT3Z', value: 'it3z' },
-          ],
+          dataSource: this.classOptions,
           fields: { text: 'text', value: 'value' },
           value: (<{ [key: string]: Object; }>(args.data))['Class'] as string || 'all',
           floatLabelType: 'Always',
@@ -106,6 +132,21 @@ export class AppComponent implements OnInit{
     if (event.requestType === 'eventRemoved' && event.deletedRecords) {
       event.deletedRecords.forEach(event => this.deleteEvent(event['Guid']));
     }
+  }
+
+
+  /** Filter events based on selected Class (X, Y, Z) */
+  filterEvents(): void {
+    if (this.selectedClass === 'all') {
+      this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
+    } else {
+      this.eventSettings = {
+        ...this.eventSettings,
+        dataSource: this.allEvents.filter(event => event.Class === this.selectedClass)
+      };
+    }
+
+    this.scheduleObj.refresh();
   }
 
   /** POST event to send to backend. Send the whole event object.

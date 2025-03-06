@@ -1,8 +1,23 @@
-<div class="p-4 pb-0">
+<div class="flex flex-row justify-between">
+  <div class="p-4 pb-0 flex items-center gap-4">
+      <mat-form-field>
+        <mat-label>Select Class</mat-label>
+        <mat-select [(ngModel)]="selectedClass" (selectionChange)="filterEvents()">
+          <mat-option *ngFor="let option of classOptions" [value]="option.value">
+            {{ option.text }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+
+  <div class="p-4 pb-0">
     <button mat-flat-button (click)="editMode = !editMode">
-        Edit mode: {{ editMode ? 'ON' : 'OFF' }}
+      Edit mode: {{ editMode ? 'ON' : 'OFF' }}
     </button>
 </div>
+</div>
+
+
 <div class="p-4">
     <ejs-schedule 
         #scheduleObj 
@@ -12,6 +27,7 @@
         (actionComplete)="onActionComplete($event)"
         (popupOpen)="onPopupOpen($event)"
         [readonly]="!editMode"
+        [eventSettings]="eventSettings"
     >
     </ejs-schedule>
 </div>
