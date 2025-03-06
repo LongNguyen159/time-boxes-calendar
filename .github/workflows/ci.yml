@@ -20,7 +20,8 @@ jobs:
           node-version: 20  # or your required version
           
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+        working-directory: frontend
 
       - name: Run Tests
         run: npm run test -- --watch=false --browsers=ChromeHeadless
