@@ -5,8 +5,7 @@ import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, 
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
 import { ResizeService, DragAndDropService } from '@syncfusion/ej2-angular-schedule';
 import {MatButtonModule} from '@angular/material/button';
-import { DropDownList } from '@syncfusion/ej2-dropdowns';
-import { createElement } from '@syncfusion/ej2-base';
+
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -31,93 +30,28 @@ export class AppComponent implements OnInit, AfterViewInit{
   @ViewChild('scheduleObj') public scheduleObj!: ScheduleComponent;
   title = 'time-boxes-calendar';
 
-  private backendUrl = 'http://192.168.15.107:8080';
+  private backendUrl = 'http://localhost:8080';
 
-  editMode: boolean = true;
   
-  classOptions = [
-    { text: 'All classes', value: 'all' },
-    { text: 'IT3X', value: 'it3x' },
-    { text: 'IT3Y', value: 'it3y' },
-    { text: 'IT3Z', value: 'it3z' },
-  ];
-
-  selectedClass: string = 'all'; // Default selection
-
-  // Library event settings model. This manages internal data source and events handling
-  eventSettings: EventSettingsModel = {
-    dataSource: []
-  };
-
-  private allEvents: any[] = []; // Store all events initially
+  
 
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.fetchEvents();
+    // this.fetchEvents();
   }
 
   ngAfterViewInit() {
     // Get all displayed events on component load
-    setTimeout(() => {
-      this.allEvents = this.scheduleObj.getEvents() as any[];
-      this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
-    }, 500); // Delay to ensure events are loaded
+    // setTimeout(() => {
+    //   this.allEvents = this.scheduleObj.getEvents() as any[];
+    //   this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
+    // }, 500); // Delay to ensure events are loaded
   }
 
 
-  onPopupOpen(args: PopupOpenEventArgs): void {
-    if (args.type === 'Editor') {
-      const formElement = args.element.querySelector('.e-schedule-form') as HTMLElement;
-
-      const fieldsToHide = [
-        // '.e-location-container',  // Hides "Location"
-        // '.e-description-container',  // Hides "Description"
-        '.e-all-day-time-zone-row',  // Hides "All-day" checkbox & Timezone
-        // '.e-recurrenceeditor-container'  // Hides "Repeat" (Recurrence) option
-      ];
-
-      fieldsToHide.forEach(selector => {
-          const field = formElement.querySelector(selector) as HTMLElement;
-          if (field) {
-              field.style.display = 'none';  // Hides the field
-          }
-      });
-
-
-      // Check if the custom field already exists
-      if (!args.element.querySelector('.custom-field-row')) {
-        // Create a new row for the dropdown
-        let row: HTMLElement = createElement('div', { className: 'custom-field-row' });
-        let formElement: HTMLElement = args.element.querySelector('.e-schedule-form') as HTMLElement;
-
-        // Insert before the title input field
-        formElement.firstChild?.insertBefore(row, args.element.querySelector('.e-title-location-row'));
-
-        let container: HTMLElement = createElement('div', { className: 'custom-field-container' });
-        let inputEle: HTMLInputElement = createElement('input', {
-          className: 'e-field',
-          attrs: { name: 'Class' }
-        }) as HTMLInputElement;
-
-        container.appendChild(inputEle);
-        row.appendChild(container);
-
-        // Initialize the dropdown list
-        let dropDownList: DropDownList = new DropDownList({
-          dataSource: this.classOptions,
-          fields: { text: 'text', value: 'value' },
-          value: (<{ [key: string]: Object; }>(args.data))['Class'] as string || 'all',
-          floatLabelType: 'Always',
-          placeholder: 'Class'
-        });
-
-        dropDownList.appendTo(inputEle);
-        inputEle.setAttribute('name', 'Class');
-      }
-    }
-  }
+  
 
   onActionComplete(event: ActionEventArgs) {
     console.log('Action complete:', event);
@@ -136,20 +70,20 @@ export class AppComponent implements OnInit, AfterViewInit{
 
 
   /** Filter events based on selected Class (X, Y, Z) */
-  filterEvents(): void {
-    if (this.selectedClass === 'all') {
-      this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
-    } else {
-      this.eventSettings = {
-        ...this.eventSettings,
-        dataSource: this.allEvents.filter(event => 
-          event.Class === this.selectedClass || event.Class === 'all' // Include 'all' class since other classes are subsets of it
-        )
-      };
-    }
+  // filterEvents(): void {
+  //   if (this.selectedClass === 'all') {
+  //     this.eventSettings = { ...this.eventSettings, dataSource: this.allEvents };
+  //   } else {
+  //     this.eventSettings = {
+  //       ...this.eventSettings,
+  //       dataSource: this.allEvents.filter(event => 
+  //         event.Class === this.selectedClass || event.Class === 'all' // Include 'all' class since other classes are subsets of it
+  //       )
+  //     };
+  //   }
   
-    this.scheduleObj.refresh();
-  }
+  //   this.scheduleObj.refresh();
+  // }
   
 
   /** POST event to send to backend. Send the whole event object.

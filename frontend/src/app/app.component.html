@@ -1,4 +1,4 @@
-<div class="flex flex-row justify-between">
+<!-- <div class="flex flex-row justify-between">
   <div class="p-4 pb-0 flex items-center gap-4">
       <mat-form-field>
         <mat-label>Select Class</mat-label>
@@ -15,22 +15,10 @@
       Edit mode: {{ editMode ? 'ON' : 'OFF' }}
     </button>
 </div>
-</div>
+</div> -->
 
 
-<div class="p-4">
-    <ejs-schedule 
-        #scheduleObj 
-        width="100%"
-        [currentView]="'Week'"
-        [timeFormat]="'HH:mm'"
-        (actionComplete)="onActionComplete($event)"
-        (popupOpen)="onPopupOpen($event)"
-        [readonly]="!editMode"
-        [eventSettings]="eventSettings"
-    >
-    </ejs-schedule>
-</div>
+
 
 
 <router-outlet />
