@@ -1,0 +1,51 @@
+<!-- Navbar -->
+<div class="flex flex-row w-full p-3 gap-2 items-center sticky top-0 z-50 bg-white">
+
+    <!-- LEFTHAND SIDE BUTTONS -->
+    @if (showBackButton) {
+        <div class="z-50">
+            <a mat-button (click)="navigateBack()" class="flex flex-row justify-center items-center gap-2">
+                <mat-icon>arrow_back</mat-icon>
+                <span>{{ backLabel }}</span>
+            </a>
+        </div>
+    }
+    
+
+    <div class="flex flex-row w-full justify-center items-center fixed">
+        <ng-content></ng-content>
+    </div>
+    
+    <!-- RIGHTHAND SIDE BUTTONS -->
+    <div class="flex flex-row w-full items-center justify-end">
+        <mat-menu #settingsMenu="matMenu" class="app-menu">
+
+            <!-- Home link -->
+            @if(showHomeButton) {
+                <a mat-menu-item [routerLink]="RoutePath.HomePage" 
+                   [routerLinkActive]="'active-link'" 
+                   class="flex flex-row justify-center items-center gap-2">
+                    <mat-icon fontSet="material-symbols-outlined">home</mat-icon>
+                    <span>Home</span>
+                </a>
+            }
+
+            @if(showCalendarPageButton) {
+                <a mat-menu-item [routerLink]="RoutePath.CalendarPage" 
+                   [routerLinkActive]="'active-link'"
+                   class="flex flex-row justify-center items-center gap-2">
+                    <mat-icon fontSet="material-symbols-outlined">calendar_today</mat-icon>
+                    <span>View Calendar</span>
+                </a>
+            }
+        </mat-menu>
+    
+
+        <!-- Menu Trigger Button -->
+        <div class="pr-4 flex flex-row items-center">
+            <button mat-icon-button class="!flex flex-row !items-center" [matMenuTriggerFor]="settingsMenu" aria-label="More options">
+                <mat-icon fontSet="material-symbols-outlined">more_vert</mat-icon>
+            </button>
+        </div>
+    </div> 
+</div>

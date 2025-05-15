@@ -5,9 +5,9 @@
         [currentView]="'Week'"
         [timeFormat]="'HH:mm'"
         (actionComplete)="onActionComplete($event)"
+        (popupOpen)="onPopupOpen($event)"
+        [readonly]="!editMode"
+        [eventSettings]="eventSettings"
     >
     </ejs-schedule>
 </div>
-
-
-<router-outlet />
