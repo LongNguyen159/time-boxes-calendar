@@ -21,6 +21,7 @@ export class NavbarComponent {
   
   @Input() showCalendarPageButton: boolean = true;
   @Input() showHomeButton: boolean = true;
+  @Input() showLoginButton: boolean = true;
 
 
   @Input() backLink: string = ''; // Optional back link: if provided, will navigate to this link when click on 'Back'
