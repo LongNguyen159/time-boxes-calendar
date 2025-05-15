@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,7 +23,7 @@ import { createElement } from '@syncfusion/ej2-base';
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss'
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   classOptions = [
     { text: 'All classes', value: 'all' },
     { text: 'IT3X', value: 'it3x' },
@@ -43,10 +43,62 @@ export class CalendarComponent {
 
   editMode: boolean = true;
 
+  ngOnInit(): void {
+    this.loadEventsFromLocalStorage();
+  }
+
+  private loadEventsFromLocalStorage(): void {
+    const savedEvents = localStorage.getItem('calendarEvents');
+    if (savedEvents) {
+      this.allEvents = JSON.parse(savedEvents);
+      console.log('Loaded events from local storage:', this.allEvents);
+      
+      // Update the eventSettings to use the loaded events
+      this.eventSettings = {
+        dataSource: this.allEvents,
+        fields: {
+          id: 'Id',
+          subject: { name: 'Subject' },
+          startTime: { name: 'StartTime' },
+          endTime: { name: 'EndTime' }
+        }
+      };
+    }
+  }
+
 
 
   onActionComplete(event: ActionEventArgs) {
     console.log('Action complete:', event);
+
+    if (event.requestType === 'eventCreated' && event.addedRecords) {
+      this.allEvents = [...this.allEvents, ...event.addedRecords];
+      this.saveEventsToLocalStorage();
+    }
+  
+    if (event.requestType === 'eventChanged' && event.changedRecords) {
+      // Update events in allEvents array
+      event.changedRecords.forEach(updatedEvent => {
+        const index = this.allEvents.findIndex(e => e.Id === updatedEvent['Id']);
+        if (index !== -1) {
+          this.allEvents[index] = updatedEvent;
+        }
+      });
+      this.saveEventsToLocalStorage();
+    }
+  
+    if (event.requestType === 'eventRemoved' && event.deletedRecords) {
+      // Remove events from allEvents array
+      event.deletedRecords.forEach(deletedEvent => {
+        const index = this.allEvents.findIndex(e => e.Id === deletedEvent['Id']);
+        if (index !== -1) {
+          this.allEvents.splice(index, 1);
+        }
+      });
+      this.saveEventsToLocalStorage();
+    }
+
+
 
 
     // if (event.requestType === 'eventCreated' && event.addedRecords) {
@@ -61,6 +113,34 @@ export class CalendarComponent {
   }
 
 
+  private saveEventsToLocalStorage(): void {
+    // Create a map to store the most recent version of each event by ID
+    const eventMap = new Map<string, any>();
+    
+    // Process events in order, so later occurrences of the same ID will overwrite earlier ones
+    this.allEvents.forEach(event => {
+      if (event.Id) {
+        eventMap.set(event.Id, event);
+      } else {
+        // For events without ID, generate one to avoid issues
+        const newId = 'event_' + new Date().getTime().toString();
+        event.Id = newId;
+        eventMap.set(newId, event);
+      }
+    });
+    
+    // Convert map values back to array
+    const uniqueEvents = Array.from(eventMap.values());
+    
+    // Save to localStorage
+    localStorage.setItem('calendarEvents', JSON.stringify(uniqueEvents));
+    
+    // Update our allEvents array with the deduplicated data
+    this.allEvents = uniqueEvents;
+  }
+
+
+  /** Customise fields on opening event editor */
   onPopupOpen(args: PopupOpenEventArgs): void {
     if (args.type === 'Editor') {
       const formElement = args.element.querySelector('.e-schedule-form') as HTMLElement;
