@@ -1,15 +1,117 @@
-<div class="login-container">
-  <div class="login-box">
-    <h2>Welcome Back</h2>
+<div class="flex justify-center items-center min-h-screen p-4">
+  <mat-card class="w-full max-w-md">
+    <mat-card-header class="mb-4 !pb-4">
+      <mat-card-title class="text-2xl">{{ isRegistering ? 'Register New Account' : 'Login to Calendar' }}</mat-card-title>
+    </mat-card-header>
 
-    <input type="text" placeholder="Username" [(ngModel)]="username" />
-    <input type="password" placeholder="Password" [(ngModel)]="password" />
+    <mat-card-content>
+      <div *ngIf="errorMessage" class="flex items-center p-3 mb-4 bg-red-50 text-red-700 rounded">
+        <mat-icon fontSet="material-symbols-outlined" class="mr-2">error</mat-icon> 
+        {{ errorMessage }}
+      </div>
+      
+      <!-- Login Form -->
+      <form *ngIf="!isRegistering" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">person</mat-icon>
+          <mat-error *ngIf="hasError(loginForm, 'username')">Username is required</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">lock</mat-icon>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+            <mat-icon fontSet="material-symbols-outlined">
+              {{hidePassword ? 'visibility_off' : 'visibility'}}
+            </mat-icon>
+          </button>
+          <mat-error *ngIf="hasError(loginForm, 'password')">Password is required</mat-error>
+        </mat-form-field>
+        
+        <div class="flex flex-col justify-between items-center pt-2 gap-2">
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading" class="px-6 w-full">
+            <span *ngIf="!isLoading">Login</span>
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          </button>
 
-    <button (click)="onLogin()">Login</button>
-    <button (click)="onRegister()">Register</button>
 
-    <div class="hint">
-      <small>Use <code>student1 / 1234</code> or <code>teacher1 / abcd</code></small>
-    </div>
-  </div>
+          <button mat-button type="button" [disabled]="isLoading" (click)="onRegister()" class="px-6">
+            Create an account
+          </button>
+        </div>
+      </form>
+      
+      <!-- Registration Form -->
+      <form *ngIf="isRegistering" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="name">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">badge</mat-icon>
+          <mat-error *ngIf="hasError(registerForm, 'name')">Name is required</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">email</mat-icon>
+          <mat-error *ngIf="hasError(registerForm, 'email')">Valid email is required</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">person</mat-icon>
+          <mat-error *ngIf="hasError(registerForm, 'username')">Username is required</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">lock</mat-icon>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+            <mat-icon fontSet="material-symbols-outlined">
+              {{hidePassword ? 'visibility_off' : 'visibility'}}
+            </mat-icon>
+          </button>
+          <mat-error *ngIf="hasError(registerForm, 'password')">Password must be at least 6 characters</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role">
+            <mat-option [value]="userRole.Student">Student</mat-option>
+            <mat-option [value]="userRole.Teacher">Teacher</mat-option>
+          </mat-select>
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">school</mat-icon>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Class</mat-label>
+          <input matInput formControlName="class">
+          <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">class</mat-icon>
+        </mat-form-field>
+        
+        <div class="py-2">
+          <mat-checkbox formControlName="allowPushMessage" class="block">
+            Allow push notifications
+          </mat-checkbox>
+        </div>
+        
+        <div class="flex justify-between items-center pt-2">
+          <button mat-stroked-button type="button" (click)="cancelRegistration()" class="px-6">
+            Cancel
+          </button>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="isLoading || registerForm.invalid" class="px-6">
+            <span *ngIf="!isLoading">Register</span>
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          </button>
+          
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
