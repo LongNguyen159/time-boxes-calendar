@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { CalendarService } from './calendar.service';
+import { UserService } from './services/user.service';
 
 
 @Component({
@@ -18,12 +18,12 @@ import { CalendarService } from './calendar.service';
 })
 export class AppComponent implements OnInit {
   title = 'time-boxes-calendar';
-  calendarService = inject(CalendarService)
+  userService = inject(UserService)
   router = inject(Router)
 
   ngOnInit(): void {
     // Check if the user is logged in. If not, redirect to the login page.
-    if (!this.calendarService.checkIfUserIsLoggedIn()) {
+    if (!this.userService.checkIfUserIsLoggedIn()) {
       this.router.navigate(['/login']);
     }
   }

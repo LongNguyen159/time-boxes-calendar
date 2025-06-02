@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { CalendarService } from './calendar.service';
+import { UserService } from './services/user.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const calendarService = inject(CalendarService);
+  const userService = inject(UserService);
   const router = inject(Router);
   
-  if (calendarService.checkIfUserIsLoggedIn()) {
+  if (userService.checkIfUserIsLoggedIn()) {
     return true;
   }
   

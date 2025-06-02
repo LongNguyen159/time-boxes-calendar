@@ -1,39 +1,33 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserData, UserRole } from './models';
+import { API_URL, UserData } from '../models';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
-
 interface ApiResponse<T> {
   data: T;
   message: string;
 }
 
+
+
 @Injectable({
   providedIn: 'root'
 })
-export class CalendarService {
-
+export class UserService {
+  private readonly USER_STORAGE_KEY = 'calendarUserData'
   http = inject(HttpClient)
   router = inject(Router)
-  private readonly apiUrl = 'http://localhost:8000/api'
-  private readonly USER_STORAGE_KEY = 'calendarUserData'
-
+  
   constructor() { }
 
-  getAllEventsOfUser(userId: string) {
-    const userData = this.getCurrentUser();
-    if (!userData) return of(null);
-    
-    return this.http.get(`${this.apiUrl}/events/user/${userId}`);
-  }
+
 
   checkIfUserIsLoggedIn(): boolean {
     return this.getCurrentUser() !== null;
   }
 
   login(username: string, password: string): Observable<ApiResponse<UserData>> {
-    return this.http.post<ApiResponse<UserData>>(`${this.apiUrl}/user/login`, { username, password })
+    return this.http.post<ApiResponse<UserData>>(`${API_URL}/user/login`, { username, password })
       .pipe(
         tap(response => {
           // Store user data in session storage
@@ -43,7 +37,7 @@ export class CalendarService {
   }
 
   registerUser(user: UserData): Observable<ApiResponse<UserData>> {
-    return this.http.post<ApiResponse<UserData>>(`${this.apiUrl}/user`, user);
+    return this.http.post<ApiResponse<UserData>>(`${API_URL}/user`, user);
   }
 
   updateUserDetailsOrSettings(userData: Partial<UserData>): Observable<ApiResponse<UserData> | null> {
@@ -51,7 +45,7 @@ export class CalendarService {
     if (!currentUser) return of(null);
     
     return this.http.put<ApiResponse<UserData>>(
-      `${this.apiUrl}/user/${currentUser.username}`, 
+      `${API_URL}/user/${currentUser.username}`, 
       userData
     ).pipe(
       tap(response => {
@@ -80,6 +74,7 @@ export class CalendarService {
       return null;
     }
   }
+
 
   logout() {
     sessionStorage.removeItem(this.USER_STORAGE_KEY);

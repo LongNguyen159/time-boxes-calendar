@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CalendarService } from '../../calendar.service';
 import { UserData, UserRole } from '../../models';
 import { CommonModule } from '@angular/common';
 
@@ -17,6 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { UiService } from '../../services/ui.service';
+import { UserService } from '../../services/user.service';
 @Component({
   selector: 'app-login',
   imports: [
@@ -48,13 +48,13 @@ export class LoginComponent implements OnInit {
   hidePassword = true;
 
   private router = inject(Router);
-  private calendarService = inject(CalendarService);
+  userService = inject(UserService)
   private fb = inject(FormBuilder);
   uiService = inject(UiService)
 
   constructor() {
     // Redirect if already logged in
-    if (this.calendarService.checkIfUserIsLoggedIn()) {
+    if (this.userService.checkIfUserIsLoggedIn()) {
       this.router.navigate(['/calendar']);
     }
   }
@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit {
     
     const { username, password } = this.loginForm.value;
     
-    this.calendarService.login(username, password).subscribe({
+    this.userService.login(username, password).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.uiService.openSnackBar('Login successful', 'Close');
@@ -114,7 +114,7 @@ export class LoginComponent implements OnInit {
 
       const newUser: UserData = this.registerForm.value;
 
-      this.calendarService.registerUser(newUser).subscribe({
+      this.userService.registerUser(newUser).subscribe({
         next: (response) => {
           this.isLoading = false;
           this.isRegistering = false;
