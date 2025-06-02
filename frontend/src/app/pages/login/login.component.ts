@@ -16,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { UiService } from '../../services/ui.service';
 @Component({
   selector: 'app-login',
   imports: [
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private calendarService = inject(CalendarService);
   private fb = inject(FormBuilder);
-  // private snackBar = inject(MatSnackBar);
+  uiService = inject(UiService)
 
   constructor() {
     // Redirect if already logged in
@@ -92,7 +92,7 @@ export class LoginComponent implements OnInit {
     this.calendarService.login(username, password).subscribe({
       next: (response) => {
         this.isLoading = false;
-        // this.snackBar.open('Login successful', 'Close', { duration: 3000 });
+        this.uiService.openSnackBar('Login successful', 'Close');
         this.router.navigate(['/calendar']);
       },
       error: (error) => {
@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           this.isLoading = false;
           this.isRegistering = false;
-          // this.snackBar.open('Registration successful! Please login.', 'Close', { duration: 5000 });
+          this.uiService.openSnackBar('Registration successful! Please login.', 'Close');
         },
         error: (error) => {
           this.isLoading = false;
