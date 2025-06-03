@@ -23,7 +23,7 @@
           <mat-label>Password</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
           <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">lock</mat-icon>
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+          <button mat-icon-button type="button" matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
             <mat-icon fontSet="material-symbols-outlined">
               {{hidePassword ? 'visibility_off' : 'visibility'}}
             </mat-icon>
@@ -71,9 +71,9 @@
           <mat-label>Password</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
           <mat-icon matPrefix fontSet="material-symbols-outlined" class="mr-2">lock</mat-icon>
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
             <mat-icon fontSet="material-symbols-outlined">
-              {{hidePassword ? 'visibility_off' : 'visibility'}}
+              {{ hidePassword ? 'visibility_off' : 'visibility' }}
             </mat-icon>
           </button>
           <mat-error *ngIf="hasError(registerForm, 'password')">Password must be at least 6 characters</mat-error>
