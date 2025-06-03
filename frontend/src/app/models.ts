@@ -5,6 +5,7 @@ export enum RoutePath {
   HomePage = '/',
   LoginPage = '/login',
   CalendarPage = '/calendar',
+  UserProfilePage = '/user-profile',
 }
 
 export interface UserData {

@@ -47,6 +47,10 @@ export class CalendarComponent implements OnInit {
     this.loadEventsFromLocalStorage();
   }
 
+  /** Get events from API: Fetch all events of given user:
+   * Get current user from SessionStorage.
+   * Fetch events from API using user metadata.
+   */
   private loadEventsFromLocalStorage(): void {
     const savedEvents = localStorage.getItem('calendarEvents');
     if (savedEvents) {

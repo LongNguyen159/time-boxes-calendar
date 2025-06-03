@@ -5,7 +5,7 @@ export const routes: Routes = [
     { path: RoutePath.HomePage.split('/')[1], loadComponent: () => import('./pages/home-page/home-page.component').then(m => m.HomePageComponent) },
     { path: RoutePath.CalendarPage.split('/')[1], loadComponent: () => import('./pages/calendar-page/calendar-page.component').then(m => m.CalendarPageComponent), canActivate: [() => import('./auth.guard').then(m => m.authGuard)] },
     { path: RoutePath.LoginPage.split('/')[1], loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
-    
+    { path: RoutePath.UserProfilePage.split('/')[1], loadComponent: () => import('./pages/user-page/user-page.component').then(m => m.UserPageComponent), canActivate: [() => import('./auth.guard').then(m => m.authGuard)] },
 
     { path: '**', redirectTo: RoutePath.HomePage }
 ];

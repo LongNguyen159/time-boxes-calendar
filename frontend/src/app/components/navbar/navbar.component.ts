@@ -21,7 +21,7 @@ export class NavbarComponent {
   
   @Input() showCalendarPageButton: boolean = true;
   @Input() showHomeButton: boolean = true;
-  @Input() showLoginButton: boolean = true;
+  @Input() showUserProfileButton: boolean = true;
 
 
   @Input() backLink: string = RoutePath.HomePage; // Optional back link: if provided, will navigate to this link when click on 'Back'

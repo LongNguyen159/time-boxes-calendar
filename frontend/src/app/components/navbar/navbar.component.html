@@ -39,14 +39,15 @@
                 </a>
             }
 
-            @if(showLoginButton) {
-                 <a mat-menu-item [routerLink]="RoutePath.LoginPage" 
+            @if(showUserProfileButton) {
+                 <a mat-menu-item [routerLink]="RoutePath.UserProfilePage" 
                    [routerLinkActive]="'active-link'"
                    class="flex flex-row justify-center items-center gap-2">
                     <mat-icon fontSet="material-symbols-outlined">account_circle</mat-icon>
-                    <span>Login</span>
+                    <span>Your Profile</span>
                 </a>
             }
+
         </mat-menu>
     
 
