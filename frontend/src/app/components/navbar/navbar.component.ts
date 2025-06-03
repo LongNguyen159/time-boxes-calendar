@@ -24,7 +24,7 @@ export class NavbarComponent {
   @Input() showLoginButton: boolean = true;
 
 
-  @Input() backLink: string = ''; // Optional back link: if provided, will navigate to this link when click on 'Back'
+  @Input() backLink: string = RoutePath.HomePage; // Optional back link: if provided, will navigate to this link when click on 'Back'
   @Input() backLabel: string = 'Back';
 
   RoutePath = RoutePath;
