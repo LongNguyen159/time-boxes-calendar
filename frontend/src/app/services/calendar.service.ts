@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../models';
 import { Observable, of} from 'rxjs';
 import { UserService } from './user.service';
+import { throwError } from 'rxjs';
 
 
 
@@ -20,10 +21,48 @@ export class CalendarService {
 
   constructor() { }
 
-  getAllEventsOfUser(userId: string) {
+  getAllEventsOfUser() {
     const userData = this.userService.getCurrentUser();
-    if (!userData) return of(null);
+    if (!userData) {
+      return throwError(() => new Error('User is not logged in.'));
+    }
+
     
-    return this.http.get(`${API_URL}/events/user/${userId}`);
+    return this.http.get(`${API_URL}/timebox/filter?userId=${userData.id}`);
+  }
+
+
+
+  saveEvents(event: any): Observable<any> {
+    const userId = this.userService.getCurrentUser()?.id
+
+    const postData = {
+      UserId: userId,
+      ...event
+    }
+
+    console.log('POST payload saving evts', postData)
+
+    return this.http.post(`${API_URL}/timebox`, postData);
+  }
+
+
+  updateEvent(event: any): Observable<any> {
+    const userId = this.userService.getCurrentUser()?.id
+
+    const postData = {
+      UserId: userId,
+      ...event
+    }
+
+    console.log('PUT payload saving evts', postData)
+
+    return this.http.put(`${API_URL}/timebox`, postData);
+  }
+
+  
+
+  deleteEvent(event: any): Observable<any> {
+    return this.http.delete(`${API_URL}/timebox?id=${event.Id}`);
   }
 }

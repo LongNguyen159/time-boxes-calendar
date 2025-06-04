@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit {
     
     const { username, password } = this.loginForm.value;
     
-    this.userService.loginMockup(username, password).subscribe({
+    this.userService.login(username, password).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.uiService.openSnackBar('Login successful', 'Close');

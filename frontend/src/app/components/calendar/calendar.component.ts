@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -7,6 +7,7 @@ import { WeekService, MonthService, WorkWeekService, DayService, AgendaService, 
 import { ScheduleModule, View } from '@syncfusion/ej2-angular-schedule'
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
 import { createElement } from '@syncfusion/ej2-base';
+import { CalendarService } from '../../services/calendar.service';
 
 
 @Component({
@@ -24,6 +25,9 @@ import { createElement } from '@syncfusion/ej2-base';
   styleUrl: './calendar.component.scss'
 })
 export class CalendarComponent implements OnInit {
+  calendarService = inject(CalendarService)
+
+
   classOptions = [
     { text: 'All classes', value: 'all' },
     { text: 'IT3X', value: 'it3x' },
@@ -44,7 +48,8 @@ export class CalendarComponent implements OnInit {
   editMode: boolean = true;
 
   ngOnInit(): void {
-    this.loadEventsFromLocalStorage();
+    // this.loadEventsFromLocalStorage();
+    this.loadEventsFromAPI()
   }
 
   /** Get events from API: Fetch all events of given user:
@@ -70,77 +75,129 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  private loadEventsFromAPI(): void {
+      this.calendarService.getAllEventsOfUser().subscribe(
+        (events: any) => {
+          this.allEvents = events.json ?? events.data ?? [];
+          console.log('Loaded events response', events)
+          console.log('Loaded events from API:', this.allEvents);
+  
+          // Update the eventSettings to use the loaded events
+          this.eventSettings = {
+            dataSource: this.allEvents,
+            fields: {
+              id: 'Id',
+              subject: { name: 'Subject' },
+              startTime: { name: 'StartTime' },
+              endTime: { name: 'EndTime' }
+            }
+          };
+        },
+        (error) => {
+          console.error('Error fetching events from API:', error);
+        }
+      );
+    }
 
 
-  onActionComplete(event: ActionEventArgs) {
+
+  onActionComplete(event: ActionEventArgs): void {
     console.log('Action complete:', event);
 
     if (event.requestType === 'eventCreated' && event.addedRecords) {
-      this.allEvents = [...this.allEvents, ...event.addedRecords];
-      this.saveEventsToLocalStorage();
+      event.addedRecords.forEach((newEvent) => {
+        // this.allEvents.push(newEvent); // Update the allEvents array
+        this.saveEventsToAPI(newEvent); // Save the single event to the API
+      });
     }
-  
+
     if (event.requestType === 'eventChanged' && event.changedRecords) {
-      // Update events in allEvents array
-      event.changedRecords.forEach(updatedEvent => {
-        const index = this.allEvents.findIndex(e => e.Id === updatedEvent['Id']);
-        if (index !== -1) {
-          this.allEvents[index] = updatedEvent;
-        }
+      event.changedRecords.forEach((updatedEvent) => {
+        // const index = this.allEvents.findIndex((e) => e.Id === updatedEvent['Id']);
+        // if (index !== -1) {
+        //   this.allEvents[index] = updatedEvent; // Update the allEvents array
+        // }
+        this.updateEventAPI(updatedEvent); // Save the single event to the API
       });
-      this.saveEventsToLocalStorage();
     }
-  
+
     if (event.requestType === 'eventRemoved' && event.deletedRecords) {
-      // Remove events from allEvents array
-      event.deletedRecords.forEach(deletedEvent => {
-        const index = this.allEvents.findIndex(e => e.Id === deletedEvent['Id']);
-        if (index !== -1) {
-          this.allEvents.splice(index, 1);
-        }
+      console.log('events', event)
+      console.log('all events', this.allEvents)
+      event.deletedRecords.forEach((deletedEvent) => {
+        this.deleteEventAPI(deletedEvent); // Delete the single event from the API
+        // const index = this.allEvents.findIndex((e) => e.Id === deletedEvent['Id']);
+        // if (index !== -1) {
+        //   console.log('Delete event:', deletedEvent)
+        //   this.allEvents.splice(index, 1); // Update the allEvents array
+        // }
       });
-      this.saveEventsToLocalStorage();
     }
-
-
-
-
-    // if (event.requestType === 'eventCreated' && event.addedRecords) {
-    //   event.addedRecords.forEach(event => this.saveEvent(event));
-    // }
-    // if (event.requestType === 'eventChanged' && event.changedRecords) {
-    //   event.changedRecords.forEach(event => this.updateEvent(event));
-    // }
-    // if (event.requestType === 'eventRemoved' && event.deletedRecords) {
-    //   event.deletedRecords.forEach(event => this.deleteEvent(event['Guid']));
-    // }
   }
 
 
-  private saveEventsToLocalStorage(): void {
-    // Create a map to store the most recent version of each event by ID
-    const eventMap = new Map<string, any>();
-    
-    // Process events in order, so later occurrences of the same ID will overwrite earlier ones
-    this.allEvents.forEach(event => {
-      if (event.Id) {
-        eventMap.set(event.Id, event);
-      } else {
-        // For events without ID, generate one to avoid issues
-        const newId = 'event_' + new Date().getTime().toString();
-        event.Id = newId;
-        eventMap.set(newId, event);
+
+  private saveEventsToAPI(event: any): void {
+    this.calendarService.saveEvents(event).subscribe({
+      next: (response) => {
+        console.log('Events saved successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error saving events to API:', error);
       }
     });
+  }
+
+  private updateEventAPI(event: any): void {
+    this.calendarService.updateEvent(event).subscribe({
+      next: (response) => {
+        console.log('Events saved successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error saving events to API:', error);
+      }
+    });
+  }
+
+
+  private deleteEventAPI(event: any): void {
+    this.calendarService.deleteEvent(event).subscribe({
+      next: (response) => {
+        console.log('Events saved successfully:', response);
+      },
+      error: (error) => {
+        console.error('Error saving events to API:', error);
+      }
+    });
+  }
+
+  
+
+
+  private saveEventsToLocalStorage(): void {
+    // // Create a map to store the most recent version of each event by ID
+    // const eventMap = new Map<string, any>();
     
-    // Convert map values back to array
-    const uniqueEvents = Array.from(eventMap.values());
+    // // Process events in order, so later occurrences of the same ID will overwrite earlier ones
+    // this.allEvents.forEach(event => {
+    //   if (event.Id) {
+    //     eventMap.set(event.Id, event);
+    //   } else {
+    //     // For events without ID, generate one to avoid issues
+    //     const newId = 'event_' + new Date().getTime().toString();
+    //     event.Id = newId;
+    //     eventMap.set(newId, event);
+    //   }
+    // });
     
-    // Save to localStorage
-    localStorage.setItem('calendarEvents', JSON.stringify(uniqueEvents));
+    // // Convert map values back to array
+    // const uniqueEvents = Array.from(eventMap.values());
     
-    // Update our allEvents array with the deduplicated data
-    this.allEvents = uniqueEvents;
+    // // Save to localStorage
+    // localStorage.setItem('calendarEvents', JSON.stringify(uniqueEvents));
+    
+    // // Update our allEvents array with the deduplicated data
+    // this.allEvents = uniqueEvents;
   }
 
 
